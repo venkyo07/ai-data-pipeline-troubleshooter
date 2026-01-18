@@ -1,15 +1,13 @@
+# LLM responses are non deterministic; retries and validation are mandatory
 import requests
-import json
+from src.utils.json_utils import extract_json
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "mistral"
+MAX_RETRIES = 2
 
 
 def explain_error(error_type: str, cleaned_log: str) -> dict:
-    """
-    Uses a local Ollama LLM to explain the error, root cause, and resolution.
-    """
-
     prompt = f"""
 You are a senior data engineer.
 
@@ -23,7 +21,8 @@ Tasks:
 2. Identify the most likely root cause
 3. Suggest clear remediation steps
 
-Return the response strictly in JSON with keys:
+IMPORTANT:
+Return ONLY valid JSON with keys:
 - explanation
 - root_cause
 - resolution
@@ -35,9 +34,19 @@ Return the response strictly in JSON with keys:
         "stream": False
     }
 
-    response = requests.post(OLLAMA_URL, json=payload)
-    response.raise_for_status()
+    last_error = None
 
-    raw_output = response.json()["response"]
-    return json.loads(raw_output)
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = requests.post(OLLAMA_URL, json=payload, timeout=60)
+            response.raise_for_status()
+
+            raw_output = response.json()["response"]
+            return extract_json(raw_output)
+
+        except Exception as e:
+            last_error = e
+            print(f"[WARN] LLM attempt {attempt} failed: {e}")
+
+    raise RuntimeError(f"LLM failed after {MAX_RETRIES} attempts") from last_error
 
