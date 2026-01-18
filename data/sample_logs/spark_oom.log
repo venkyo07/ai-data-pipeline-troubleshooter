@@ -1,0 +1,5 @@
+ERROR Executor: Exception in task 3.0 in stage 12.0 (TID 45)
+java.lang.OutOfMemoryError: Java heap space
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+Container killed by YARN for exceeding memory limits.

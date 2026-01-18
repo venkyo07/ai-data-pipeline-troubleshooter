@@ -1,0 +1,4 @@
+[2024-01-15 02:14:10,234] ERROR - Task failed with exception
+AirflowException: DAG run failed
+Task retries exceeded
+Executor heartbeat timeout
