@@ -6,18 +6,20 @@ OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "mistral"
 MAX_RETRIES = 2
 
-
-def explain_error(error_type: str, cleaned_log: str) -> dict:
+def explain_error(error_type: str, cleaned_log: str, context: str) -> dict:
     prompt = f"""
 You are a senior data engineer.
 
 Error type detected: {error_type}
 
+Known historical context:
+{context}
+
 Log excerpt:
 {cleaned_log}
 
 Tasks:
-1. Explain the error in simple terms
+1. Explain the error using the historical context if relevant
 2. Identify the most likely root cause
 3. Suggest clear remediation steps
 
@@ -27,7 +29,6 @@ Return ONLY valid JSON with keys:
 - root_cause
 - resolution
 """
-
     payload = {
         "model": MODEL_NAME,
         "prompt": prompt,

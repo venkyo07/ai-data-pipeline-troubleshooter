@@ -1,0 +1,15 @@
+[
+  {
+    "error_type": "OOM_ERROR",
+    "description": "Spark executor ran out of Java heap memory",
+    "root_cause": "Executor memory allocation is too low for the workload",
+    "resolution": "Increase spark.executor.memory or reduce data skew"
+  },
+  {
+    "error_type": "DAG_FAILURE",
+    "description": "Airflow DAG failed due to task retries exceeding limit",
+    "root_cause": "Downstream service unavailable or executor timeout",
+    "resolution": "Check task dependencies and executor health"
+  }
+]
+
