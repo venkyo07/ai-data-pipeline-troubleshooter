@@ -1,6 +1,9 @@
 # LLM responses are non deterministic; retries and validation are mandatory
 import requests
 from src.utils.json_utils import extract_json
+from src.utils.logger import setup_logger
+
+logger = setup_logger("llm_client")
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "mistral"
@@ -47,7 +50,7 @@ Return ONLY valid JSON with keys:
 
         except Exception as e:
             last_error = e
-            print(f"[WARN] LLM attempt {attempt} failed: {e}")
+            logger.warning(f"LLM attempt {attempt} failed: {e}")
 
     raise RuntimeError(f"LLM failed after {MAX_RETRIES} attempts") from last_error
 

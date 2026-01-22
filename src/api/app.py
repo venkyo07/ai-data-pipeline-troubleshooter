@@ -27,7 +27,10 @@ def analyze_log(request: LogRequest):
     if not request.log.strip():
         raise HTTPException(status_code=400, detail="Log cannot be empty")
 
-    result = analyze_log_with_ai(request.log)
-
-    return result
-
+    try:
+        return analyze_log_with_ai(request.log)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal error while analyzing log"
+        )
